@@ -83,8 +83,29 @@ python scripts/train.py --config configs/dataset/audiogen.yaml
 - Audio adjusted to correct sample rates (32kHz/16kHz)
 - JSONL manifest format with descriptions
 
+## Google Drive Integration
+Import audio files from Google Drive or export datasets for backup:
+
+```bash
+# List audio files in Google Drive
+python scripts/google_drive_sync.py list
+
+# Import audio files from Google Drive
+python scripts/google_drive_sync.py import
+
+# Import from specific folder (use folder ID from list command)
+python scripts/google_drive_sync.py import --folder-id YOUR_FOLDER_ID
+
+# Export dataset manifests to Google Drive
+python scripts/google_drive_sync.py export
+
+# Export with audio files included
+python scripts/google_drive_sync.py export --include-audio
+```
+
 ## Dependencies
 - torch, torchaudio
 - librosa, soundfile
 - numpy, scipy
 - pandas (for ESC-50 metadata)
+- Google Drive API (via Replit connector)

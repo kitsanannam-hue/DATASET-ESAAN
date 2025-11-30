@@ -9,6 +9,7 @@ packages = ["antlr", "ffmpeg-full", "gitFull", "glibcLocales", "jre", "libsndfil
 
 [agent]
 expertMode = true
+integrations = ["google-drive:1.0.0"]
 
 [workflows]
 runButton = "Project"
