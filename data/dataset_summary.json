@@ -1,25 +1,25 @@
 {
-  "musicgen_samples": 13,
-  "audiogen_samples": 2010,
-  "total_samples": 2023,
+  "musicgen_samples": 85,
+  "audiogen_samples": 2082,
+  "total_samples": 2167,
   "manifests": {
     "musicgen": "data/processed/musicgen_train.jsonl",
     "audiogen": "data/processed/audiogen_train.jsonl"
   },
   "sample_descriptions": {
     "musicgen": [
-      "c major chord",
-      "g major chord",
-      "am chord",
-      "f major chord",
-      "d minor chord"
+      "Thai instrument 5",
+      "Thai instrument 4",
+      "Thai instrument 3",
+      "Thai instrument 2",
+      "Thai instrument 1"
     ],
     "audiogen": [
-      "white noise",
-      "pink noise",
-      "brown noise",
-      "low tone",
-      "mid tone"
+      "Thai instrument 5",
+      "Thai instrument 4",
+      "Thai instrument 3",
+      "Thai instrument 2",
+      "Thai instrument 1"
     ]
   }
 }

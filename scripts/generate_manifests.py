@@ -8,9 +8,88 @@ from pathlib import Path
 import soundfile as sf
 
 
+def process_gdrive_audio(raw_dir: Path, processed_dir: Path) -> tuple:
+    """Process imported Google Drive audio files."""
+    import librosa
+    import soundfile as sf
+    import numpy as np
+    
+    gdrive_raw = raw_dir / "gdrive"
+    if not gdrive_raw.exists():
+        return [], []
+    
+    musicgen_out = processed_dir / "musicgen" / "gdrive"
+    audiogen_out = processed_dir / "audiogen" / "gdrive"
+    musicgen_out.mkdir(parents=True, exist_ok=True)
+    audiogen_out.mkdir(parents=True, exist_ok=True)
+    
+    musicgen_data = []
+    audiogen_data = []
+    
+    for audio_file in gdrive_raw.rglob("*.wav"):
+        try:
+            audio_32k, _ = librosa.load(audio_file, sr=32000, mono=True)
+            
+            rms = np.sqrt(np.mean(audio_32k**2))
+            if rms > 0:
+                target_rms = 10 ** (-18.0 / 20)
+                audio_32k = audio_32k * (target_rms / rms)
+                audio_32k = np.clip(audio_32k, -1.0, 1.0)
+            
+            max_samples_32k = 30 * 32000
+            if len(audio_32k) > max_samples_32k:
+                audio_32k = audio_32k[:max_samples_32k]
+            
+            out_path_32k = musicgen_out / f"{audio_file.stem}.wav"
+            sf.write(out_path_32k, audio_32k, 32000)
+            
+            name_parts = audio_file.stem.replace("_", " ").replace("-", " ")
+            if "toei" in audio_file.stem.lower():
+                desc = f"Thai toei flute {name_parts}"
+            elif "phuthai" in audio_file.stem.lower():
+                desc = f"Thai phuthai instrument {name_parts}"
+            else:
+                desc = f"Thai instrument {name_parts}"
+            
+            musicgen_data.append({
+                "path": str(out_path_32k.absolute()),
+                "duration": len(audio_32k) / 32000,
+                "sample_rate": 32000,
+                "description": desc
+            })
+            
+            audio_16k, _ = librosa.load(audio_file, sr=16000, mono=True)
+            
+            rms = np.sqrt(np.mean(audio_16k**2))
+            if rms > 0:
+                target_rms = 10 ** (-18.0 / 20)
+                audio_16k = audio_16k * (target_rms / rms)
+                audio_16k = np.clip(audio_16k, -1.0, 1.0)
+            
+            max_samples_16k = 10 * 16000
+            if len(audio_16k) > max_samples_16k:
+                audio_16k = audio_16k[:max_samples_16k]
+            
+            out_path_16k = audiogen_out / f"{audio_file.stem}.wav"
+            sf.write(out_path_16k, audio_16k, 16000)
+            
+            audiogen_data.append({
+                "path": str(out_path_16k.absolute()),
+                "duration": len(audio_16k) / 16000,
+                "sample_rate": 16000,
+                "description": desc
+            })
+            
+        except Exception as e:
+            print(f"Error processing {audio_file}: {e}")
+    
+    return musicgen_data, audiogen_data
+
+
 def main():
     """Generate manifest files."""
     processed_dir = Path("data/processed")
+    raw_dir = Path("data/raw")
     
     print("=" * 60)
     print("Generating AudioCraft Training Manifests")
@@ -19,11 +98,19 @@ def main():
     musicgen_data = []
     audiogen_data = []
     
+    print("\n--- Processing Google Drive imports ---")
+    gdrive_music, gdrive_audio = process_gdrive_audio(raw_dir, processed_dir)
+    print(f"Processed {len(gdrive_music)} Google Drive files for MusicGen")
+    print(f"Processed {len(gdrive_audio)} Google Drive files for AudioGen")
+    musicgen_data.extend(gdrive_music)
+    audiogen_data.extend(gdrive_audio)
+    
     print("\n--- Collecting MusicGen samples (32kHz) ---")
     musicgen_dirs = [
         processed_dir / "musicgen" / "synthetic",
         processed_dir / "musicgen" / "fma",
-        processed_dir / "musicgen" / "attached"
+        processed_dir / "musicgen" / "attached",
+        processed_dir / "musicgen" / "gdrive"
     ]
     
     for dir_path in musicgen_dirs:
@@ -46,7 +133,8 @@ def main():
     audiogen_dirs = [
         processed_dir / "audiogen" / "synthetic",
         processed_dir / "audiogen" / "esc50",
-        processed_dir / "audiogen" / "attached"
+        processed_dir / "audiogen" / "attached",
+        processed_dir / "audiogen" / "gdrive"
     ]
     
     esc50_meta = Path("data/raw/esc50/meta/esc50.csv")

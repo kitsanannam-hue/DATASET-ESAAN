@@ -4,11 +4,12 @@
 This project prepares real audio datasets for training AudioCraft models (MusicGen and AudioGen). It downloads, processes, and organizes audio data with proper manifests for training.
 
 ## Current State
-- **Dataset Ready**: 2023 total samples prepared
-  - MusicGen: 13 samples (synthetic music chords and sweeps)
-  - AudioGen: 2010 samples (ESC-50 environmental sounds)
+- **Dataset Ready**: 2167 total samples prepared
+  - MusicGen: 85 samples (Thai instruments from Google Drive + synthetic chords)
+  - AudioGen: 2082 samples (ESC-50 + Thai instruments from Google Drive)
 - **Manifests Generated**: JSONL format with paths, durations, and descriptions
 - **Data Loaders Working**: PyTorch DataLoader verified for both model types
+- **Google Drive Integration**: Connected for importing/exporting audio files
 
 ## Project Structure
 ```
