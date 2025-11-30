@@ -1,9 +1,9 @@
-run = "cowsay Configure me!"
+
+run = "python3 scripts/demo.py"
 entrypoint = "README.md"
 
 [nix]
 channel = "stable-24_11"
-packages = ["cowsay"]
 
 [agent]
 expertMode = true
@@ -17,7 +17,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python scripts/demo.py"
+args = "python3 scripts/demo.py"
 
 [[workflows.workflow]]
 name = "Train"
@@ -26,7 +26,7 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python scripts/train.py"
+args = "python3 scripts/train.py"
 
 [[workflows.workflow]]
 name = "Evaluate"
@@ -35,4 +35,4 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python scripts/evaluate.py"
+args = "python3 scripts/evaluate.py"
