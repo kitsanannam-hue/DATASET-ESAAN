@@ -1,0 +1,9 @@
+{
+  "musicgen_samples": 9,
+  "audiogen_samples": 206,
+  "total_samples": 215,
+  "manifests": {
+    "musicgen": "data/processed/musicgen_train.jsonl",
+    "audiogen": "data/processed/audiogen_train.jsonl"
+  }
+}
