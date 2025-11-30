@@ -33,11 +33,21 @@ class MusicGenAgent(BaseAgent):
         logger.info(f"Loading MusicGen model: {self.model_name}")
         
         try:
-            # Placeholder for actual AudioCraft model loading
-            # from audiocraft.models import MusicGen
-            # self.model = MusicGen.get_pretrained(self.model_name)
-            # self.model.to(self.device)
-            logger.info("Model loaded successfully")
+            try:
+                from audiocraft.models import MusicGen
+                self.model = MusicGen.get_pretrained(self.model_name)
+                self.model.to(self.device)
+                logger.info("AudioCraft model loaded successfully")
+            except ImportError:
+                logger.warning("AudioCraft not installed. Using mock model for demo.")
+                # Create a simple mock model object
+                class MockModel:
+                    def __init__(self, device):
+                        self.device = device
+                    def generate(self, prompts, **kwargs):
+                        return None
+                self.model = MockModel(self.device)
+                logger.info("Mock model loaded successfully")
         except Exception as e:
             logger.error(f"Failed to load model: {e}")
             raise
@@ -55,7 +65,7 @@ class MusicGenAgent(BaseAgent):
         
         Args:
             prompts: List of text descriptions
-            duration: Duration in seconds (default: config max_duration)
+            duration: Duration in seconds (default: config max duration)
             temperature: Sampling temperature
             top_k: Top-k sampling parameter
             top_p: Top-p sampling parameter
@@ -69,19 +79,26 @@ class MusicGenAgent(BaseAgent):
         duration = duration or self.max_duration
         logger.info(f"Generating {duration}s music for {len(prompts)} prompts")
         
-        # Placeholder for actual generation
-        # self.model.set_generation_params(
-        #     duration=duration,
-        #     temperature=temperature,
-        #     top_k=top_k,
-        #     top_p=top_p
-        # )
-        # audio = self.model.generate(prompts)
+        try:
+            # Try to use actual AudioCraft model
+            if hasattr(self.model, 'set_generation_params'):
+                self.model.set_generation_params(
+                    duration=duration,
+                    temperature=temperature,
+                    top_k=top_k,
+                    top_p=top_p
+                )
+                audio = self.model.generate(prompts)
+                logger.info(f"Generated audio shape: {audio.shape}")
+                return audio
+        except Exception as e:
+            logger.warning(f"AudioCraft generation failed: {e}. Using mock output.")
         
-        # Mock output for now
+        # Fallback to mock output
         batch_size = len(prompts)
         samples = int(duration * self.sample_rate)
         audio = torch.randn(batch_size, 1, samples)
+        logger.info(f"Generated mock audio shape: {audio.shape}")
         
         return audio
     
