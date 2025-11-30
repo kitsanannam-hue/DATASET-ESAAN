@@ -1,0 +1,98 @@
+{
+  "synthetic_music": 9,
+  "synthetic_audio": 6,
+  "music_samples": [
+    {
+      "path": "data/processed/musicgen/synthetic/c_major_chord.wav",
+      "duration": 5.0,
+      "sample_rate": 32000,
+      "description": "C major chord, warm and bright"
+    },
+    {
+      "path": "data/processed/musicgen/synthetic/g_major_chord.wav",
+      "duration": 5.0,
+      "sample_rate": 32000,
+      "description": "G major chord, open and resonant"
+    },
+    {
+      "path": "data/processed/musicgen/synthetic/am_chord.wav",
+      "duration": 5.0,
+      "sample_rate": 32000,
+      "description": "A minor chord, melancholic"
+    },
+    {
+      "path": "data/processed/musicgen/synthetic/f_major_chord.wav",
+      "duration": 5.0,
+      "sample_rate": 32000,
+      "description": "F major chord, rich and full"
+    },
+    {
+      "path": "data/processed/musicgen/synthetic/d_minor_chord.wav",
+      "duration": 5.0,
+      "sample_rate": 32000,
+      "description": "D minor chord, dark and moody"
+    },
+    {
+      "path": "data/processed/musicgen/synthetic/e_major_chord.wav",
+      "duration": 5.0,
+      "sample_rate": 32000,
+      "description": "E major chord, bright and powerful"
+    },
+    {
+      "path": "data/processed/musicgen/synthetic/bass_sweep.wav",
+      "duration": 5.0,
+      "sample_rate": 32000,
+      "description": "Bass frequency sweep, deep and rumbling"
+    },
+    {
+      "path": "data/processed/musicgen/synthetic/mid_sweep.wav",
+      "duration": 5.0,
+      "sample_rate": 32000,
+      "description": "Mid frequency sweep, warm and present"
+    },
+    {
+      "path": "data/processed/musicgen/synthetic/high_sweep.wav",
+      "duration": 5.0,
+      "sample_rate": 32000,
+      "description": "High frequency sweep, bright and airy"
+    }
+  ],
+  "audio_samples": [
+    {
+      "path": "data/processed/audiogen/synthetic/white_noise.wav",
+      "duration": 5.0,
+      "sample_rate": 16000,
+      "description": "White noise, static and hissing"
+    },
+    {
+      "path": "data/processed/audiogen/synthetic/pink_noise.wav",
+      "duration": 5.0,
+      "sample_rate": 16000,
+      "description": "Pink noise, soft and natural"
+    },
+    {
+      "path": "data/processed/audiogen/synthetic/brown_noise.wav",
+      "duration": 5.0,
+      "sample_rate": 16000,
+      "description": "Brown noise, deep and rumbling"
+    },
+    {
+      "path": "data/processed/audiogen/synthetic/low_tone.wav",
+      "duration": 3.0,
+      "sample_rate": 16000,
+      "description": "Low frequency tone, bass sound"
+    },
+    {
+      "path": "data/processed/audiogen/synthetic/mid_tone.wav",
+      "duration": 3.0,
+      "sample_rate": 16000,
+      "description": "Mid frequency tone, A440 reference"
+    },
+    {
+      "path": "data/processed/audiogen/synthetic/high_tone.wav",
+      "duration": 3.0,
+      "sample_rate": 16000,
+      "description": "High frequency tone, treble sound"
+    }
+  ]
+}
