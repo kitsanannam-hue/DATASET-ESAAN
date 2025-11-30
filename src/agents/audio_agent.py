@@ -71,9 +71,6 @@ class AudioGenAgent(BaseAgent):
         Returns:
             Generated audio tensor [batch, channels, samples]
         """
-        if self.model is None:
-            raise RuntimeError("Model not loaded. Call load_model() first.")
-
         duration = duration or self.max_duration
         logger.info(f"Generating {duration}s audio for {len(prompts)} prompts")
 
