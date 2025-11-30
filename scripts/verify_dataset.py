@@ -10,7 +10,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.data.dataset import verify_dataset, create_dataloader
+from src.data.dataset import MusicGenDataset, AudioGenDataset, create_dataloader, verify_dataset
 
 
 def main():
