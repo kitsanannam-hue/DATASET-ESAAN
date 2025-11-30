@@ -1,26 +1,30 @@
 
-# Default dataset configuration
+# Dataset configuration
 
-name: default_dataset
-sample_rate: 32000
-channels: 1
-segment_duration: 30.0
-batch_size: 8
+name: audiocraft_dataset
+type: music
 
 # Data paths
-train:
-  path: data/processed/manifests/train_data.jsonl
-  num_samples: null  # Use all available
+data_dir: data/processed
+metadata_file: null
 
-valid:
-  path: data/processed/manifests/valid_data.jsonl
-  num_samples: null
+# Audio parameters
+sample_rate: 32000
+duration: 30.0
+file_extensions:
+  - .wav
+  - .mp3
+  - .flac
 
-test:
-  path: data/processed/manifests/test_data.jsonl
-  num_samples: null
+# DataLoader settings
+batch_size: 4
+num_workers: 2
+shuffle: true
+pin_memory: true
 
-# Audio processing
-normalize: true
+# Augmentation
 augmentation:
-  enabled: false
+  enabled: true
+  noise_level: 0.001
+  normalize: true
+  target_db: -18.0

@@ -16,6 +16,8 @@ experiment_name: audiocraft_experiment
 logging:
   level: INFO
   log_dir: outputs/logs
+  use_wandb: false
+  wandb_project: audiocraft-agents
 
 # Paths
 paths:

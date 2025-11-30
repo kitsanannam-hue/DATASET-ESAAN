@@ -2,5 +2,37 @@ run = "cowsay Configure me!"
 entrypoint = "README.md"
 
 [nix]
-channel = "stable-24_05"
+channel = "stable-24_11"
 packages = ["cowsay"]
+
+[agent]
+expertMode = true
+
+[workflows]
+
+[[workflows.workflow]]
+name = "Demo"
+author = 50411020
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python scripts/demo.py"
+
+[[workflows.workflow]]
+name = "Train"
+author = 50411020
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python scripts/train.py"
+
+[[workflows.workflow]]
+name = "Evaluate"
+author = 50411020
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python scripts/evaluate.py"

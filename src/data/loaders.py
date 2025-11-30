@@ -1,61 +1,169 @@
 
-"""Data loading utilities for AudioCraft datasets."""
+"""Data loaders for AudioCraft datasets."""
 
-import json
 import logging
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Dict, List, Optional, Tuple
+import torch
+from torch.utils.data import Dataset, DataLoader
+import torchaudio
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
 
-class AudioDataLoader:
-    """Load and manage AudioCraft datasets."""
+class AudioDataset(Dataset):
+    """Base audio dataset class."""
     
-    def __init__(self, manifest_path: str, sample_rate: int = 32000):
-        """Initialize data loader.
+    def __init__(
+        self,
+        data_dir: str,
+        sample_rate: int = 32000,
+        duration: float = 10.0,
+        file_extensions: List[str] = [".wav", ".mp3", ".flac"]
+    ):
+        """Initialize audio dataset.
         
         Args:
-            manifest_path: Path to JSONL manifest file
+            data_dir: Directory containing audio files
             sample_rate: Target sample rate
+            duration: Target duration in seconds
+            file_extensions: Valid audio file extensions
         """
-        self.manifest_path = Path(manifest_path)
+        self.data_dir = Path(data_dir)
         self.sample_rate = sample_rate
-        self.samples = []
+        self.duration = duration
+        self.max_samples = int(duration * sample_rate)
         
-        if self.manifest_path.exists():
-            self.load_manifest()
-    
-    def load_manifest(self) -> List[Dict[str, Any]]:
-        """Load samples from JSONL manifest.
+        # Find all audio files
+        self.audio_files = []
+        for ext in file_extensions:
+            self.audio_files.extend(self.data_dir.rglob(f"*{ext}"))
         
-        Returns:
-            List of sample dictionaries
-        """
-        logger.info(f"Loading manifest from {self.manifest_path}")
-        self.samples = []
-        
-        with open(self.manifest_path, 'r') as f:
-            for line in f:
-                sample = json.loads(line.strip())
-                self.samples.append(sample)
-        
-        logger.info(f"Loaded {len(self.samples)} samples")
-        return self.samples
-    
-    def get_sample(self, idx: int) -> Optional[Dict[str, Any]]:
-        """Get sample by index.
-        
-        Args:
-            idx: Sample index
-            
-        Returns:
-            Sample dictionary or None
-        """
-        if 0 <= idx < len(self.samples):
-            return self.samples[idx]
-        return None
+        logger.info(f"Found {len(self.audio_files)} audio files in {data_dir}")
     
     def __len__(self) -> int:
-        """Return number of samples."""
-        return len(self.samples)
+        """Return dataset length."""
+        return len(self.audio_files)
+    
+    def __getitem__(self, idx: int) -> Dict[str, torch.Tensor]:
+        """Load and process audio file.
+        
+        Args:
+            idx: Index of audio file
+            
+        Returns:
+            Dictionary with audio tensor and metadata
+        """
+        audio_path = self.audio_files[idx]
+        
+        try:
+            # Load audio
+            waveform, sr = torchaudio.load(audio_path)
+            
+            # Resample if needed
+            if sr != self.sample_rate:
+                resampler = torchaudio.transforms.Resample(sr, self.sample_rate)
+                waveform = resampler(waveform)
+            
+            # Ensure mono
+            if waveform.shape[0] > 1:
+                waveform = torch.mean(waveform, dim=0, keepdim=True)
+            
+            # Trim or pad to target duration
+            current_samples = waveform.shape[1]
+            if current_samples > self.max_samples:
+                # Random crop
+                start = torch.randint(0, current_samples - self.max_samples, (1,)).item()
+                waveform = waveform[:, start:start + self.max_samples]
+            elif current_samples < self.max_samples:
+                # Pad with zeros
+                padding = self.max_samples - current_samples
+                waveform = torch.nn.functional.pad(waveform, (0, padding))
+            
+            return {
+                "audio": waveform,
+                "path": str(audio_path),
+                "sample_rate": self.sample_rate
+            }
+        
+        except Exception as e:
+            logger.error(f"Error loading {audio_path}: {e}")
+            # Return zeros on error
+            return {
+                "audio": torch.zeros(1, self.max_samples),
+                "path": str(audio_path),
+                "sample_rate": self.sample_rate
+            }
+
+
+class MusicDataset(AudioDataset):
+    """Music-specific dataset with metadata."""
+    
+    def __init__(
+        self,
+        data_dir: str,
+        metadata_file: Optional[str] = None,
+        sample_rate: int = 32000,
+        duration: float = 30.0
+    ):
+        """Initialize music dataset.
+        
+        Args:
+            data_dir: Directory containing audio files
+            metadata_file: Optional JSON/CSV file with descriptions
+            sample_rate: Target sample rate
+            duration: Target duration in seconds
+        """
+        super().__init__(data_dir, sample_rate, duration)
+        self.metadata = {}
+        
+        if metadata_file:
+            self._load_metadata(metadata_file)
+    
+    def _load_metadata(self, metadata_file: str) -> None:
+        """Load metadata from file."""
+        # Placeholder for metadata loading
+        logger.info(f"Loading metadata from {metadata_file}")
+        # self.metadata = json.load(open(metadata_file))
+    
+    def __getitem__(self, idx: int) -> Dict[str, torch.Tensor]:
+        """Get item with metadata."""
+        item = super().__getitem__(idx)
+        
+        # Add text description if available
+        file_path = item["path"]
+        if file_path in self.metadata:
+            item["description"] = self.metadata[file_path]
+        else:
+            item["description"] = "music audio"
+        
+        return item
+
+
+def create_dataloader(
+    dataset: Dataset,
+    batch_size: int = 8,
+    shuffle: bool = True,
+    num_workers: int = 4,
+    **kwargs
+) -> DataLoader:
+    """Create a DataLoader from dataset.
+    
+    Args:
+        dataset: PyTorch dataset
+        batch_size: Batch size
+        shuffle: Whether to shuffle data
+        num_workers: Number of data loading workers
+        
+    Returns:
+        DataLoader instance
+    """
+    return DataLoader(
+        dataset,
+        batch_size=batch_size,
+        shuffle=shuffle,
+        num_workers=num_workers,
+        pin_memory=True,
+        **kwargs
+    )
