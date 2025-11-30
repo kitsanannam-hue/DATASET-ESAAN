@@ -1,0 +1,26 @@
+
+# Default dataset configuration
+
+name: default_dataset
+sample_rate: 32000
+channels: 1
+segment_duration: 30.0
+batch_size: 8
+
+# Data paths
+train:
+  path: data/processed/manifests/train_data.jsonl
+  num_samples: null  # Use all available
+
+valid:
+  path: data/processed/manifests/valid_data.jsonl
+  num_samples: null
+
+test:
+  path: data/processed/manifests/test_data.jsonl
+  num_samples: null
+
+# Audio processing
+normalize: true
+augmentation:
+  enabled: false

@@ -1,0 +1,25 @@
+
+# Main configuration file for AudioCraft AI Agents
+
+defaults:
+  - dataset: default
+  - model: musicgen_small
+  - solver: default
+  - _self_
+
+# Global settings
+device: cuda
+seed: 42
+experiment_name: audiocraft_experiment
+
+# Logging
+logging:
+  level: INFO
+  log_dir: outputs/logs
+
+# Paths
+paths:
+  data_dir: data
+  models_dir: models
+  outputs_dir: outputs
+  cache_dir: data/cache

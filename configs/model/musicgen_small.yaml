@@ -1,0 +1,28 @@
+
+# MusicGen Small model configuration
+
+name: musicgen_small
+type: lm
+
+architecture:
+  dim: 1024
+  num_heads: 16
+  num_layers: 24
+  causal: true
+
+compression_model:
+  name: encodec
+  sample_rate: 32000
+  channels: 1
+  n_q: 4
+
+conditioning:
+  text:
+    model: t5-base
+    finetune: false
+  
+generation:
+  max_duration: 30.0
+  temperature: 1.0
+  top_k: 250
+  top_p: 0.0
