@@ -1,8 +1,14 @@
-
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Cache and temporary files
+data/cache/*
+*.wav
+*.mp3
+*.pdf
+.pytest_cache/
 *.so
 .Python
 build/
