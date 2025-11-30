@@ -1,0 +1,28 @@
+name: audiogen_dataset
+type: audio
+
+data_dir: data/processed
+manifest_file: data/processed/audiogen_train.jsonl
+
+sample_rate: 16000
+duration: 10.0
+file_extensions:
+  - .wav
+  - .mp3
+  - .flac
+
+batch_size: 8
+num_workers: 2
+shuffle: true
+pin_memory: true
+
+augmentation:
+  enabled: true
+  noise_level: 0.001
+  normalize: true
+  target_db: -18.0
+
+model:
+  name: facebook/audiogen-medium
+  max_duration: 10
+  sample_rate: 16000

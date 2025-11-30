@@ -1,6 +1,7 @@
 
 { pkgs }: {
   deps = [
+    pkgs.sox
     pkgs.python311
     pkgs.python311Packages.pip
     pkgs.python311Packages.torch

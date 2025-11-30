@@ -1,0 +1,28 @@
+name: musicgen_dataset
+type: music
+
+data_dir: data/processed
+manifest_file: data/processed/musicgen_train.jsonl
+
+sample_rate: 32000
+duration: 30.0
+file_extensions:
+  - .wav
+  - .mp3
+  - .flac
+
+batch_size: 4
+num_workers: 2
+shuffle: true
+pin_memory: true
+
+augmentation:
+  enabled: true
+  noise_level: 0.001
+  normalize: true
+  target_db: -18.0
+  
+model:
+  name: facebook/musicgen-small
+  max_duration: 30
+  sample_rate: 32000

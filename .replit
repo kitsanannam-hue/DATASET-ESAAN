@@ -1,9 +1,11 @@
 
 run = "python3 scripts/demo.py"
 entrypoint = "README.md"
+modules = ["python-3.11"]
 
 [nix]
 channel = "stable-24_11"
+packages = ["antlr", "ffmpeg-full", "gitFull", "glibcLocales", "jre", "libsndfile", "libxcrypt", "libyaml", "pkg-config", "xsimd"]
 
 [agent]
 expertMode = true
